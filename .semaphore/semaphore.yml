@@ -17,6 +17,7 @@ blocks:
             - cache restore
             - 'mvn -q package jmeter:configure -Dmaven.test.skip=true'
             - cache store
+    dependencies: []
   - name: Test
     task:
       env_vars:
@@ -31,10 +32,11 @@ blocks:
         - name: Unit tests
           commands:
             - mvn test
-            - mvn test
         - name: Integration tests
           commands:
             - mvn test -Pintegration-testing
+    dependencies:
+      - Build
   - name: Performance tests
     task:
       env_vars:
@@ -53,3 +55,13 @@ blocks:
             - sleep 20
             - 'mvn -q jmeter:jmeter'
             - 'mvn jmeter:results'
+    dependencies:
+      - Test
+  - name: 'Block #4'
+    dependencies:
+      - Build
+      - Performance tests
+    task:
+      jobs:
+        - name: ''
+          commands: []
